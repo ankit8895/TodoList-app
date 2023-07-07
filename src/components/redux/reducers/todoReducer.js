@@ -23,6 +23,7 @@ export const addTodoCall = createAsyncThunk(
         todo,
         config
       );
+      dispatch(actions.addTodo(data));
     } catch (error) {
       console.error(error);
     }
@@ -45,6 +46,7 @@ export const updateTodoCall = createAsyncThunk(
         todo,
         config
       );
+      dispatch(actions.updateTodo(data));
     } catch (error) {
       console.error(error);
     }
@@ -57,6 +59,7 @@ export const deleteTodoCall = createAsyncThunk(
     const { id } = todo;
     try {
       await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+      dispatch(actions.deleteTodo(todo));
     } catch (error) {
       console.error(error);
     }
@@ -70,7 +73,28 @@ const todoSlice = createSlice({
     todos: [],
     error: null,
   },
-  reducers: {},
+  reducers: {
+    addTodo: (state, action) => {
+      const newTodo = action.payload;
+      state.todos = [...state.todos, newTodo];
+    },
+    updateTodo: (state, action) => {
+      const todo = action.payload;
+      const existTodo = state.todos.find((x) => x.id === todo.id);
+
+      if (existTodo) {
+        state.todos = state.todos.map((x) =>
+          x.id === existTodo.id ? todo : x
+        );
+      } else {
+        state.todos = [...state.todos, todo];
+      }
+    },
+    deleteTodo: (state, action) => {
+      const todo = action.payload;
+      state.todos.splice(state.todos.indexOf(todo), 1);
+    },
+  },
   extraReducers: (builder) => {
     builder.addCase(fetchTodo.pending, (state) => {
       state.loading = true;
@@ -87,3 +111,4 @@ const todoSlice = createSlice({
 });
 
 export const todoReducer = todoSlice.reducer;
+export const actions = todoSlice.actions;
