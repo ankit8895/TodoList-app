@@ -20,6 +20,7 @@ const HomePage = () => {
             </Col>
           </Form>
         </Row>
+        <Row></Row>
       </Container>
     </div>
   );
