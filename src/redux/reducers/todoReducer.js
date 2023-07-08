@@ -34,7 +34,7 @@ export const updateTodoCall = createAsyncThunk(
   'updateTodoCall',
   async (todo, { dispatch }) => {
     const { id } = todo;
-    config = {
+    const config = {
       headers: {
         'Content-type': 'application/json; charset=UTF-8',
       },
@@ -91,19 +91,19 @@ const todoSlice = createSlice({
       }
     },
     deleteTodo: (state, action) => {
-      const todo = action.payload;
-      state.todos.splice(state.todos.indexOf(todo), 1);
+      const deletedTodo = action.payload;
+      state.todos = state.todos.filter((todo) => todo.id !== deletedTodo.id);
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(fetchTodo.pending, (state) => {
+    builder.addCase(fetchTodoCall.pending, (state) => {
       state.loading = true;
     });
-    builder.addCase(fetchTodo.fulfilled, (state, action) => {
+    builder.addCase(fetchTodoCall.fulfilled, (state, action) => {
       state.loading = false;
       state.todos = action.payload;
     });
-    builder.addCase(fetchTodo.rejected, (state, action) => {
+    builder.addCase(fetchTodoCall.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.response;
     });

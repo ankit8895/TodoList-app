@@ -6,7 +6,7 @@ function App() {
   return (
     <div>
       <Header />
-      <main className='py-3'>
+      <main className='mt-3'>
         <HomePage />
       </main>
       <Footer />
