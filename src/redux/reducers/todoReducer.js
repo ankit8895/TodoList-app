@@ -76,7 +76,7 @@ const todoSlice = createSlice({
   reducers: {
     addTodo: (state, action) => {
       const newTodo = action.payload;
-      state.todos = [...state.todos, newTodo];
+      state.todos = [newTodo, ...state.todos];
     },
     updateTodo: (state, action) => {
       const todo = action.payload;
