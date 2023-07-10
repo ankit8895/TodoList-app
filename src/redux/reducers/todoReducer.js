@@ -3,7 +3,7 @@ import axios from 'axios';
 
 export const fetchTodoCall = createAsyncThunk('fetchTodoCall', async () => {
   const { data } = await axios.get(
-    'https://jsonplaceholder.typicode.com/posts'
+    'https://jsonplaceholder.typicode.com/todos'
   );
 
   return data;
@@ -19,7 +19,7 @@ export const addTodoCall = createAsyncThunk(
     };
     try {
       const { data } = await axios.post(
-        'https://jsonplaceholder.typicode.com/posts',
+        'https://jsonplaceholder.typicode.com/todos',
         todo,
         config
       );
@@ -42,7 +42,7 @@ export const updateTodoCall = createAsyncThunk(
 
     try {
       const { data } = await axios.put(
-        `https://jsonplaceholder.typicode.com/posts/${id}`,
+        `https://jsonplaceholder.typicode.com/todos/${id}`,
         todo,
         config
       );
@@ -58,7 +58,7 @@ export const deleteTodoCall = createAsyncThunk(
   async (todo, { dispatch }) => {
     const { id } = todo;
     try {
-      await axios.delete(`https://jsonplaceholder.typicode.com/posts/${id}`);
+      await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
       dispatch(actions.deleteTodo(todo));
     } catch (error) {
       console.error(error);

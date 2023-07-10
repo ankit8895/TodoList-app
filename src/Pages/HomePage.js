@@ -11,7 +11,6 @@ import {
 
 const HomePage = () => {
   const [todoTitle, setTodoTitle] = useState('');
-  const [todoBody, setTodoBody] = useState('');
   const [todoId, setTodoId] = useState(null);
   const todoDetails = useSelector((state) => state.todoReducer);
   const { loading, todos } = todoDetails;
@@ -24,13 +23,18 @@ const HomePage = () => {
   }, [dispatch, todos]);
 
   const deleteHandler = (todo) => {
-    dispatch(deleteTodoCall(todo));
+    if (!todo.Completed) {
+      if (window.confirm('Task is not complete yet. Are you sure ?')) {
+        dispatch(deleteTodoCall(todo));
+      }
+    } else {
+      dispatch(deleteTodoCall(todo));
+    }
   };
 
   const editHandler = (todo) => {
     setTodoId(todo.id);
     setTodoTitle(todo.title);
-    setTodoBody(todo.body);
     window.scrollTo(0, 0);
   };
 
@@ -39,13 +43,12 @@ const HomePage = () => {
       updateTodoCall({
         id: todoId,
         title: todoTitle,
-        body: todoBody,
+        Completed: false,
         userId: 1,
       })
     );
 
     setTodoTitle('');
-    setTodoBody('');
     setTodoId(null);
   };
 
@@ -53,78 +56,128 @@ const HomePage = () => {
     dispatch(
       addTodoCall({
         title: todoTitle,
-        body: todoBody,
+        Completed: false,
         userId: 1,
       })
     );
 
-    setTodoBody('');
     setTodoTitle('');
     setTodoId(null);
+  };
+
+  const toggleHandler = (todo) => {
+    dispatch(
+      updateTodoCall({
+        id: todo.id,
+        title: todo.title,
+        Completed: !todo.Completed,
+        userId: 1,
+      })
+    );
   };
   return loading ? (
     <Loader />
   ) : (
-    <Container className='d-flex flex-column justify-content-center'>
-      <Row className='mb-3'>
-        <Form>
-          <Col className='mb-1'>
+    <Container>
+      <Row className='mb-1'>
+        <Col>
+          <Form className='d-flex flex-row justify-content-center align-items-center'>
             <Form.Control
               type='text'
               placeholder='Enter the todo title'
-              className='bg-black text-white fw-bolder'
+              className='bg-black text-white fw-bolder me-1'
               aria-label='Text'
               value={todoTitle}
+              style={{ maxWidth: '1200px', minHeight: '45px' }}
               onChange={(e) => setTodoTitle(e.target.value)}
             />
-          </Col>
-          <Col className='mb-1'>
-            <Form.Control
-              as='textarea'
-              className='bg-black text-white fw-bolder'
-              placeholder='Enter the todo description'
-              value={todoBody}
-              onChange={(e) => setTodoBody(e.target.value)}
-            />
-          </Col>
-          <Col>
             {todoId ? (
-              <Button variant='outline-success' onClick={updateHandler}>
-                Update Todo
+              <Button
+                variant='success'
+                className='fw-bolder'
+                style={{ minWidth: '100px' }}
+                onClick={updateHandler}
+              >
+                Update
               </Button>
             ) : (
-              <Button variant='outline-success' onClick={addHandler}>
-                Add todo
+              <Button
+                variant='success'
+                className='fw-bolder'
+                style={{ minWidth: '100px' }}
+                onClick={addHandler}
+              >
+                Add
               </Button>
             )}
-          </Col>
-        </Form>
+          </Form>
+        </Col>
       </Row>
       <Row>
-        <h1 className='fw-bolder'>TODO LIST</h1>
+        <div className='text-center fs-1 fw-bolder'>ALL YOUR TASKS</div>
         <div className='d-flex flex-wrap flex-row justify-content-evenly'>
-          {todos.map((todo) => (
-            <Card key={todo.id} className='mb-3' style={{ width: '18rem' }}>
-              <Card.Body>
-                <Card.Title className='text-success'>{todo.title}</Card.Title>
-                <Card.Text>{todo.body}</Card.Text>
-              </Card.Body>
-              <div className='sticky-bottom m-3 d-flex flex-wrap'>
-                <Button
-                  className='me-3'
-                  variant='primary'
-                  onClick={() => {
-                    editHandler(todo);
-                  }}
-                >
-                  <i className='fa-solid fa-pen-to-square'></i>
-                </Button>
-                <Button variant='primary' onClick={() => deleteHandler(todo)}>
-                  <i className='fa-solid fa-square-minus'></i>
-                </Button>
-              </div>
-            </Card>
-          ))}
+          {todos.map((todo) =>
+            !todo.Completed ? (
+              <Card key={todo.id} className='mb-3' style={{ width: '18rem' }}>
+                <Card.Body>
+                  <Card.Title className='text-success'>{todo.title}</Card.Title>
+                </Card.Body>
+                <div className='m-3 d-flex flex-wrap'>
+                  <Button
+                    className='me-3'
+                    variant='primary'
+                    onClick={() => {
+                      editHandler(todo);
+                    }}
+                  >
+                    <i className='fa-solid fa-pen-to-square'></i>
+                  </Button>
+                  <Button
+                    className='me-3'
+                    variant='primary'
+                    onClick={() => deleteHandler(todo)}
+                  >
+                    <i className='fa-solid fa-trash'></i>
+                  </Button>
+
+                  <Button
+                    className='me-3'
+                    variant='primary'
+                    onClick={() => toggleHandler(todo)}
+                  >
+                    <i
+                      className='fa-solid fa-circle'
+                      style={{ color: 'red' }}
+                    ></i>
+                  </Button>
+                </div>
+              </Card>
+            ) : (
+              <Card key={todo.id} className='mb-3' style={{ width: '18rem' }}>
+                <Card.Body>
+                  <Card.Title className='text-decoration-line-through text-body-secondary'>
+                    {todo.title}
+                  </Card.Title>
+                </Card.Body>
+                <div className='m-3 d-flex flex-wrap'>
+                  <Button
+                    className='me-3'
+                    variant='primary'
+                    onClick={() => deleteHandler(todo)}
+                  >
+                    <i className='fa-solid fa-trash'></i>
+                  </Button>
+
+                  <Button variant='primary' onClick={() => toggleHandler(todo)}>
+                    <i
+                      className='fa-solid fa-circle'
+                      style={{ color: 'green' }}
+                    ></i>
+                  </Button>
+                </div>
+              </Card>
+            )
+          )}
         </div>
       </Row>
     </Container>
