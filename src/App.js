@@ -1,10 +1,15 @@
+//import ToastContainer
 import { ToastContainer } from 'react-toastify';
+//import react-react-toastify/dist/ReactToastify.css
 import 'react-toastify/dist/ReactToastify.css';
-
+//import Header component
 import Header from './components/Header';
+//import Footer component
 import Footer from './components/Footer';
+//import HomePage component
 import HomePage from './Pages/HomePage';
 
+//create react class component App
 function App() {
   return (
     <div>
@@ -27,4 +32,5 @@ function App() {
   );
 }
 
+//export App component
 export default App;

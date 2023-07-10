@@ -1,6 +1,9 @@
+//import react
 import React from 'react';
+//import Container, Row , Col
 import { Container, Row, Col } from 'react-bootstrap';
 
+//create react functional component Footer
 const Footer = () => {
   return (
     <footer
@@ -18,4 +21,5 @@ const Footer = () => {
   );
 };
 
+//export Footer component
 export default Footer;

@@ -1,6 +1,9 @@
+//import react
 import React from 'react';
+//import Navbar and Container
 import { Navbar, Container } from 'react-bootstrap';
 
+//create react functional component Header
 const Header = () => {
   return (
     <header className='sticky-top'>
@@ -22,4 +25,5 @@ const Header = () => {
   );
 };
 
+//export Header component
 export default Header;

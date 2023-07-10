@@ -1,7 +1,11 @@
+//import createSlice, createAsyncThunk
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
+//import axios
 import axios from 'axios';
 
+//this method to fetch all the todos
 export const fetchTodoCall = createAsyncThunk('fetchTodoCall', async () => {
+  // fetching all todo call to server
   const { data } = await axios.get(
     'https://jsonplaceholder.typicode.com/todos'
   );
@@ -9,6 +13,7 @@ export const fetchTodoCall = createAsyncThunk('fetchTodoCall', async () => {
   return data;
 });
 
+//this method to add a new todo
 export const addTodoCall = createAsyncThunk(
   'addTodoCall',
   async (todo, { dispatch }) => {
@@ -18,11 +23,14 @@ export const addTodoCall = createAsyncThunk(
       },
     };
     try {
+      //adding new todo call to server
       const { data } = await axios.post(
         'https://jsonplaceholder.typicode.com/todos',
         todo,
         config
       );
+
+      //dispatch addTodo reducer function with new todo
       dispatch(actions.addTodo(data));
     } catch (error) {
       console.error(error);
@@ -30,9 +38,11 @@ export const addTodoCall = createAsyncThunk(
   }
 );
 
+//this method is to update the todo
 export const updateTodoCall = createAsyncThunk(
   'updateTodoCall',
   async (todo, { dispatch }) => {
+    //de-structure id from todo
     const { id } = todo;
     const config = {
       headers: {
@@ -41,11 +51,14 @@ export const updateTodoCall = createAsyncThunk(
     };
 
     try {
+      //update a todo call to server
       const { data } = await axios.put(
         `https://jsonplaceholder.typicode.com/todos/${id}`,
         todo,
         config
       );
+
+      //dispatch update todo reducer function with the updated todo
       dispatch(actions.updateTodo(data));
     } catch (error) {
       console.error(error);
@@ -53,12 +66,18 @@ export const updateTodoCall = createAsyncThunk(
   }
 );
 
+//this method is to delete a todo
 export const deleteTodoCall = createAsyncThunk(
   'deleteTodoCall',
   async (todo, { dispatch }) => {
+    //de-structure id from todo
     const { id } = todo;
+
     try {
+      //deleting a todo call to server
       await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
+
+      //dispatch delete todo reducer function with todo id
       dispatch(actions.deleteTodo(todo));
     } catch (error) {
       console.error(error);
@@ -66,6 +85,7 @@ export const deleteTodoCall = createAsyncThunk(
   }
 );
 
+//create a todo slice
 const todoSlice = createSlice({
   name: 'todo',
   initialState: {
@@ -110,5 +130,7 @@ const todoSlice = createSlice({
   },
 });
 
+//export todo reducer function
 export const todoReducer = todoSlice.reducer;
+//export todo actions
 export const actions = todoSlice.actions;

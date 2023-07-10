@@ -1,12 +1,20 @@
+//import react
 import React from 'react';
+//import ReactDOM
 import ReactDOM from 'react-dom/client';
+//import Provider
 import { Provider } from 'react-redux';
+//import store
 import store from './redux/store';
+//import bootstrap.min.css file for theme
 import './bootstrap.min.css';
+//import stylesheet
 import './index.css';
+//import App component
 import App from './App';
 import reportWebVitals from './reportWebVitals';
 
+//create entry point of the project
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
