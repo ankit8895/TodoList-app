@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { toast } from 'react-toastify';
 import { Container, Form, Button, Row, Col, Card } from 'react-bootstrap';
 import Loader from '../components/Loader';
 import {
@@ -26,9 +27,11 @@ const HomePage = () => {
     if (!todo.Completed) {
       if (window.confirm('Task is not complete yet. Are you sure ?')) {
         dispatch(deleteTodoCall(todo));
+        toast.error('Task deleted successfully');
       }
     } else {
       dispatch(deleteTodoCall(todo));
+      toast.error('Task deleted successfully');
     }
   };
 
@@ -48,6 +51,8 @@ const HomePage = () => {
       })
     );
 
+    toast.success('Task update successfully');
+
     setTodoTitle('');
     setTodoId(null);
   };
@@ -61,11 +66,16 @@ const HomePage = () => {
       })
     );
 
+    toast.success('Task added successfully');
+
     setTodoTitle('');
     setTodoId(null);
   };
 
   const toggleHandler = (todo) => {
+    if (!todo.Completed) {
+      toast.success('Congrats!!! Task completed');
+    }
     dispatch(
       updateTodoCall({
         id: todo.id,
