@@ -20,6 +20,9 @@ import {
 const HomePage = () => {
   //this hook is use to set todo title with empty string
   const [todoTitle, setTodoTitle] = useState('');
+  //this hook is use to set todo index with null value
+  const [todoIndex, setTodoIndex] = useState(-1);
+
   //this hook is use to set todo id with null value
   const [todoId, setTodoId] = useState(null);
 
@@ -43,28 +46,33 @@ const HomePage = () => {
   }, [dispatch, todos]);
 
   //delete handler method to delete a todo
-  const deleteHandler = (todo) => {
+  const deleteHandler = (todoInfo) => {
+    const { todo, index } = todoInfo;
     //if todo is not completed
     if (!todo.Completed) {
       //if todo is not completed, then asking confirmation to delete todo without mark complete
       if (window.confirm('Task is not completed yet. Are you sure ?')) {
         //if yes, then disptach delete todo call with the todo
-        dispatch(deleteTodoCall(todo));
+        dispatch(deleteTodoCall({ todo, index }));
         //notifiy that todo is deleted
         toast.error('Task deleted successfully');
       }
     } else {
       //if todo is already marked complete, dispatch delete todo call method
-      dispatch(deleteTodoCall(todo));
+      dispatch(deleteTodoCall({ todo, index }));
       //notify that todo is deleted
       toast.error('Task deleted successfully');
     }
   };
 
   //edit handler method to edit a todo
-  const editHandler = (todo) => {
-    //set todo id with the passed todo id
+  const editHandler = (todoInfo) => {
+    const { todo, index } = todoInfo;
+
+    //set todo id with the passed todo
     setTodoId(todo.id);
+    //set todo index with the passed todo index
+    setTodoIndex(index);
     //set todo title with the passed todo title
     setTodoTitle(todo.title);
     //window scroll to top of the page
@@ -73,15 +81,18 @@ const HomePage = () => {
 
   //update handler to update the todo with the edited todo
   const updateHandler = () => {
+    //set updated value to the todo
+    const todo = {
+      id: todoId,
+      title: todoTitle,
+      Completed: false,
+      userId: 1,
+    };
+
+    //assign todoIndex value as index
+    const index = todoIndex;
     //once user make changes to the todo, then on clicked the update button dispatch update todo call method
-    dispatch(
-      updateTodoCall({
-        id: todoId,
-        title: todoTitle,
-        Completed: false,
-        userId: 1,
-      })
-    );
+    dispatch(updateTodoCall({ todo, index }));
 
     //notify the todo is updated
     toast.success('Task update successfully');
@@ -90,6 +101,8 @@ const HomePage = () => {
     setTodoTitle('');
     //set todo id to null
     setTodoId(null);
+    //set todo index to -1
+    setTodoIndex(-1);
   };
 
   //add handler method is to add a new todo
@@ -113,7 +126,10 @@ const HomePage = () => {
   };
 
   //toggle handler method to mark todo complete and not complete
-  const toggleHandler = (todo) => {
+  const toggleHandler = (todoInfo) => {
+    //de-structure todo and index from todoInfo
+    const { todo, index } = todoInfo;
+
     //if todo is not completed
     if (!todo.Completed) {
       //notify todo is completed
@@ -123,10 +139,13 @@ const HomePage = () => {
     //when user marked todo to completed or not completed on clicking the toggle button, dispatch update todo call method
     dispatch(
       updateTodoCall({
-        id: todo.id,
-        title: todo.title,
-        Completed: !todo.Completed,
-        userId: 1,
+        todo: {
+          id: todo.id,
+          title: todo.title,
+          Completed: !todo.Completed,
+          userId: 1,
+        },
+        index,
       })
     );
   };
@@ -177,10 +196,10 @@ const HomePage = () => {
         <div className='text-center fs-1 fw-bolder'>ALL YOUR TASKS</div>
         <div className='d-flex flex-wrap flex-row justify-content-evenly'>
           {/* iterating the todos array and displaying all the todos*/}
-          {todos.map((todo) =>
+          {todos.map((todo, index) =>
             //  if todo is not completed, then display below card with todo details
             !todo.Completed ? (
-              <Card key={todo.id} className='mb-3' style={{ width: '18rem' }}>
+              <Card key={index} className='mb-3' style={{ width: '18rem' }}>
                 <Card.Body>
                   <Card.Title className='text-success'>{todo.title}</Card.Title>
                 </Card.Body>
@@ -189,9 +208,7 @@ const HomePage = () => {
                   <Button
                     className='me-3'
                     variant='primary'
-                    onClick={() => {
-                      editHandler(todo);
-                    }}
+                    onClick={() => editHandler({ todo, index })}
                   >
                     <i className='fa-solid fa-pen-to-square'></i>
                   </Button>
@@ -199,7 +216,7 @@ const HomePage = () => {
                   <Button
                     className='me-3'
                     variant='primary'
-                    onClick={() => deleteHandler(todo)}
+                    onClick={() => deleteHandler({ todo, index })}
                   >
                     <i className='fa-solid fa-trash'></i>
                   </Button>
@@ -207,7 +224,7 @@ const HomePage = () => {
                   <Button
                     className='me-3'
                     variant='primary'
-                    onClick={() => toggleHandler(todo)}
+                    onClick={() => toggleHandler({ todo, index })}
                   >
                     <i
                       className='fa-solid fa-circle'
@@ -218,7 +235,7 @@ const HomePage = () => {
               </Card>
             ) : (
               // if todo is completed, then display below card with the todo details
-              <Card key={todo.id} className='mb-3' style={{ width: '18rem' }}>
+              <Card key={index} className='mb-3' style={{ width: '18rem' }}>
                 <Card.Body>
                   <Card.Title className='text-decoration-line-through text-body-secondary'>
                     {todo.title}
@@ -229,12 +246,15 @@ const HomePage = () => {
                   <Button
                     className='me-3'
                     variant='primary'
-                    onClick={() => deleteHandler(todo)}
+                    onClick={() => deleteHandler({ todo, index })}
                   >
                     <i className='fa-solid fa-trash'></i>
                   </Button>
                   {/* toggle button */}
-                  <Button variant='primary' onClick={() => toggleHandler(todo)}>
+                  <Button
+                    variant='primary'
+                    onClick={() => toggleHandler({ todo, index })}
+                  >
                     <i
                       className='fa-solid fa-circle'
                       style={{ color: 'green' }}

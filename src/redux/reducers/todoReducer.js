@@ -41,7 +41,9 @@ export const addTodoCall = createAsyncThunk(
 //this method is to update the todo
 export const updateTodoCall = createAsyncThunk(
   'updateTodoCall',
-  async (todo, { dispatch }) => {
+  async (todoInfo, { dispatch }) => {
+    //de-structure todo and index from todoInfo
+    const { todo, index } = todoInfo;
     //de-structure id from todo
     const { id } = todo;
     const config = {
@@ -52,14 +54,14 @@ export const updateTodoCall = createAsyncThunk(
 
     try {
       //update a todo call to server
-      const { data } = await axios.put(
+      const { data } = await axios.patch(
         `https://jsonplaceholder.typicode.com/todos/${id}`,
         todo,
         config
       );
 
       //dispatch update todo reducer function with the updated todo
-      dispatch(actions.updateTodo(data));
+      dispatch(actions.updateTodo({ data, index }));
     } catch (error) {
       console.error(error);
     }
@@ -69,7 +71,9 @@ export const updateTodoCall = createAsyncThunk(
 //this method is to delete a todo
 export const deleteTodoCall = createAsyncThunk(
   'deleteTodoCall',
-  async (todo, { dispatch }) => {
+  async (todoInfo, { dispatch }) => {
+    //de-structure todo and index from todoInfo
+    const { todo, index } = todoInfo;
     //de-structure id from todo
     const { id } = todo;
 
@@ -77,8 +81,8 @@ export const deleteTodoCall = createAsyncThunk(
       //deleting a todo call to server
       await axios.delete(`https://jsonplaceholder.typicode.com/todos/${id}`);
 
-      //dispatch delete todo reducer function with todo id
-      dispatch(actions.deleteTodo(todo));
+      //dispatch delete todo reducer function with todo and todo index
+      dispatch(actions.deleteTodo({ todo, index }));
     } catch (error) {
       console.error(error);
     }
@@ -87,42 +91,52 @@ export const deleteTodoCall = createAsyncThunk(
 
 //create a todo slice
 const todoSlice = createSlice({
+  // todoSlice name
   name: 'todo',
+  // initial state
   initialState: {
     loading: true,
     todos: [],
     error: null,
   },
+  // all reducers
   reducers: {
+    // add todo reducer
     addTodo: (state, action) => {
       const newTodo = action.payload;
       state.todos = [newTodo, ...state.todos];
     },
+    // update todo reducer
     updateTodo: (state, action) => {
-      const todo = action.payload;
-      const existTodo = state.todos.find((x) => x.id === todo.id);
+      const { data: todo, index: todoIndex } = action.payload;
+      const existTodo = state.todos.find((x, index) => index === todoIndex);
 
       if (existTodo) {
-        state.todos = state.todos.map((x) =>
-          x.id === existTodo.id ? todo : x
+        state.todos = state.todos.map((x, index) =>
+          index === todoIndex ? todo : x
         );
       } else {
         state.todos = [...state.todos, todo];
       }
     },
+    // delete todo reducer
     deleteTodo: (state, action) => {
-      const deletedTodo = action.payload;
-      state.todos = state.todos.filter((todo) => todo.id !== deletedTodo.id);
+      const { index: todoIndex } = action.payload;
+      state.todos = state.todos.filter((todo, index) => index !== todoIndex);
     },
   },
+  // extraReducer to update the todo array in store with the data of fetchTodoCall method
   extraReducers: (builder) => {
+    // if fetchTodoCall is pending
     builder.addCase(fetchTodoCall.pending, (state) => {
       state.loading = true;
     });
+    // if fetchTodoCall is fulfilled
     builder.addCase(fetchTodoCall.fulfilled, (state, action) => {
       state.loading = false;
       state.todos = action.payload;
     });
+    // if fetchTodoCall is rejected
     builder.addCase(fetchTodoCall.rejected, (state, action) => {
       state.loading = false;
       state.error = action.payload.response;
