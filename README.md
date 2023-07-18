@@ -1,3 +1,29 @@
+# React Todo List App with API Integration
+
+https://ankit8895.github.io/TodoList-app/
+
+The libraries, dependencies, and themes used in the app are as follows:
+
+1. React
+2. Redux DOM
+3. React Toolkit
+4. React Redux
+5. React Toastify
+6. React Bootstrap
+7. Bootswatch
+8. Axios
+
+
+The React Todo List app is a powerful and interactive application designed to manage a list of tasks or todos. It incorporates several key features that allow users to fetch, add, update, and delete todo items. The app integrates with an external API, specifically the JSONPlaceholder API (https://jsonplaceholder.typicode.com/todos), to perform these operations.
+
+The main functionality of the app is to fetch and display todo items from the provided API. Upon loading the app, it makes an API call to retrieve a list of todos from the given URL. The fetched data is then rendered in the app's user interface, allowing users to view their existing todos.
+
+To add a new todo item, the app provides a form where users can enter the details of the task. When the user submits the form, the app makes a POST request to the same API endpoint. Although this is a dummy request and doesn't actually save the item on the server, it demonstrates the process of adding a new todo. The app then updates its internal state to include the newly created todo, ensuring that it is reflected in the user interface.
+
+In addition to adding new todos, the app allows users to update existing items. Each todo in the list is accompanied by an edit button, which, when clicked, opens a form pre-populated with the current todo details. Upon submitting the updated information, the app makes a PUT request to the API endpoint to mimic the process of updating the todo. The app's state is then updated accordingly, and the changes are immediately reflected in the user interface.
+
+Furthermore, the app supports the deletion of todo items. Each todo in the list includes a delete button, which, when clicked, triggers a DELETE request to the API endpoint. Again, this is a dummy call that simulates the removal of the item from the server. The app responds by updating its state and removing the deleted todo from the user interface.
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
