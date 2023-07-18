@@ -6,7 +6,7 @@ The libraries, dependencies, and themes used in the app are as follows:
 
 1. React
 2. Redux DOM
-3. React Toolkit
+3. Redux Toolkit
 4. React Redux
 5. React Toastify
 6. React Bootstrap
